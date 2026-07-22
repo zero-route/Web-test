@@ -34,29 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const menuBtn = document.getElementById("menu-btn");
-  const navMenu = document.getElementById("nav-menu");
-  const menuIcon = document.getElementById("menu-icon");
-
-  if (menuBtn && navMenu && menuIcon) {
-    menuBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      navMenu.classList.toggle("active");
-
-      const isActive = navMenu.classList.contains("active");
-      menuIcon.classList.toggle("fa-bars", !isActive);
-      menuIcon.classList.toggle("fa-xmark", isActive);
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!menuBtn.contains(e.target) && !navMenu.contains(e.target)) {
-        navMenu.classList.remove("active");
-        menuIcon.classList.add("fa-bars");
-        menuIcon.classList.remove("fa-xmark");
-      }
-    });
-  }
-
   const rolesList = [
     'Network Engineer',
     'Penetration Testing',
