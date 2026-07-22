@@ -156,3 +156,16 @@ function createTypingEffect(elementId, textList, startDelay = 0, withQuotes = tr
 
   setTimeout(typeEffect, startDelay);
 }
+
+const revealElements = document.querySelectorAll('.reveal');
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+
+revealElements.forEach(el => revealObserver.observe(el));
