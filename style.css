@@ -631,6 +631,10 @@ header.fade-out {
   opacity: 0;
 }
 
+.hero-socials a:hover {
+  scale: 1.1;
+}
+
 .main-page.show .hero-socials a {
   animation: slideFadeUp 0.6s ease-out forwards;
 }
@@ -860,7 +864,9 @@ header.fade-out {
 
 .stat-card:hover {
   border-color: var(--accent-cyan-light);
+  box-shadow: 0 0 8px var(--accent-cyan-);
   transform: translateY(-4px);
+  scale: 1.05;
 }
 
 .stat-icon {
