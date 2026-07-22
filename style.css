@@ -52,7 +52,7 @@
   height: 60vw;
   border-radius: 50%;
   background: radial-gradient(circle, var(--accent-blue-primary) 0%, var(--bg-glow-blue) 40%, transparent 70%);
-  filter: blur(100px);
+  filter: blur(80px);
   opacity: 0.45;
   animation: moveGlowBlue 18s infinite alternate ease-in-out;
   will-change: transform;
@@ -67,22 +67,22 @@
   height: 55vw;
   border-radius: 50%;
   background: radial-gradient(circle, var(--accent-purple) 0%, var(--bg-glow-purple) 50%, transparent 70%);
-  filter: blur(120px);
+  filter: blur(80px);
   opacity: 0.4;
   animation: moveGlowPurple 22s infinite alternate ease-in-out;
   will-change: transform;
 }
 
 @keyframes moveGlowBlue {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(25vw, 20vh) scale(1.2); }
-  100% { transform: translate(-10vw, 35vh) scale(0.9); }
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(25vw, 20vh, 0) scale(1.2); }
+  100% { transform: translate3d(-10vw, 35vh, 0) scale(0.9); }
 }
 
 @keyframes moveGlowPurple {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-30vw, -25vh) scale(1.15); }
-  100% { transform: translate(15vw, -15vh) scale(0.85); }
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-30vw, -25vh, 0) scale(1.15); }
+  100% { transform: translate3d(15vw, -15vh, 0) scale(0.85); }
 }
 
 header {
@@ -111,6 +111,18 @@ header.fade-out {
   0% {
     opacity: 0;
     transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animasi khusus Navigasi tanpa mengubah koordinat top */
+@keyframes navFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
   }
   100% {
     opacity: 1;
@@ -289,14 +301,14 @@ header.fade-out {
 
 #navigation {
   position: fixed;
-  top: 20px;
+  top: 60px; 
   right: 20px;
-  z-index: 1000;
+  z-index: 99999;
   opacity: 0;
 }
 
 .main-page.show #navigation {
-  animation: fadeIn 1s forwards;
+  animation: navFadeIn 0.8s ease-out forwards;
 }
 
 .nav-container {
@@ -311,7 +323,7 @@ header.fade-out {
   align-items: center;
   gap: 10px;
   padding: 10px 22px;
-  background-color: rgba(10, 14, 39, 0.6);
+  background-color: rgba(10, 14, 39, 0.85);
   border: 1px solid var(--border-active);
   border-radius: 50px;
   color: var(--text-primary);
@@ -339,20 +351,21 @@ header.fade-out {
 
 .nav-dropdown {
   position: absolute;
-  top: calc(100% + 12px);
+  top: calc(100% + 10px);
   right: 0;
-  width: 100px;
-  background-color: rgba(10, 14, 39, 0.85);
+  width: 130px; 
+  background-color: rgba(10, 14, 39, 0.95);
   border: 1px solid var(--border-active);
-  border-radius: 20px;
+  border-radius: 16px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(139, 92, 246, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(139, 92, 246, 0.25);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px) scale(0.95);
   transform-origin: top right;
   transition: all 0.3s ease;
+  z-index: 100000;
 }
 
 .nav-dropdown.active {
@@ -363,13 +376,13 @@ header.fade-out {
 
 .nav-dropdown ul {
   list-style: none;
-  padding: 20px 0;
+  padding: 15px 0;
   margin: 0;
 }
 
 .nav-dropdown ul li {
   text-align: center;
-  padding: 10px;
+  padding: 8px 12px;
 }
 
 .nav-dropdown ul li a {
@@ -393,6 +406,15 @@ header.fade-out {
   color: var(--accent-cyan-light);
 }
 
+/* KONTEN HOME & CODE CARD PERBAIKAN */
+#home {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 20px 40px 20px; /* Memberi ruang napas atas agar tidak menabrak tombol menu */
+}
+
 .code-card {
   width: 100%;
   max-width: 340px;
@@ -404,7 +426,7 @@ header.fade-out {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   font-family: 'Fira Code', Consolas, Monaco, monospace;
-  margin: 90px auto;
+  margin: 0 auto; 
   opacity: 0;
 }
 
