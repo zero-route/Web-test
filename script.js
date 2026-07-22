@@ -219,3 +219,24 @@ if (aboutDescEl) {
 
   aboutDescObserver.observe(aboutDescEl);
 }
+
+ window.addEventListener('scroll', () => {
+  const container = document.getElementById('timeline-container');
+  const progressLine = document.getElementById('timeline-progress');
+
+  if (container && progressLine) {
+    const rect = container.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+
+    const totalHeight = container.offsetHeight;
+    const startPoint = windowHeight * 0.7;
+    const currentPos = startPoint - rect.top;
+
+    let progressPercentage = (currentPos / totalHeight) * 100;
+
+    if (progressPercentage < 0) progressPercentage = 0;
+    if (progressPercentage > 100) progressPercentage = 100;
+
+    progressLine.style.setProperty('--scroll-height', `${progressPercentage}%`);
+  }
+});
