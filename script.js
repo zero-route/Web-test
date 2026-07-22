@@ -34,6 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+
+
   const rolesList = [
     'Network Engineer',
     'Penetration Testing',
