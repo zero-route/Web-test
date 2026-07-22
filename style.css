@@ -817,6 +817,20 @@ header.fade-out {
   margin: 0 auto 24px;
 }
 
+.about-desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 480px;
+}
+
+.about-desc.typing-cursor::after {
+  content: '|';
+  margin-left: 2px;
+  color: var(--accent-cyan-light);
+  animation: blinkSkillCursor 0.8s infinite;
+}
+
 .about-desc strong {
   color: var(--text-primary);
 }
@@ -873,7 +887,6 @@ header.fade-out {
   color: var(--text-muted);
 }
 
-/* ===== DESKTOP/TABLET ===== */
 @media (min-width: 900px) {
   .about-content {
     flex-direction: row;
@@ -900,4 +913,17 @@ header.fade-out {
   .about-stats {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+
+.about-buttons .btn-primary.reveal,
+.about-buttons .btn-outline.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: none;
+}
+
+.about-buttons .btn-primary.reveal.in-view,
+.about-buttons .btn-outline.reveal.in-view {
+  animation: slideFadeUp 0.8s ease-out forwards;
+  animation-delay: var(--reveal-delay, 0s);
 }

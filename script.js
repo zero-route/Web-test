@@ -180,3 +180,41 @@ revealElements.forEach(el => revealObserver.observe(el));
     const repoCountEl = document.getElementById('repo-count');
     if (repoCountEl) repoCountEl.textContent = '-';
   });
+  
+function typeOnce(elementId, speed = 15, startDelay = 0) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+
+  const text = el.getAttribute('data-text') || '';
+  el.textContent = '';
+  el.classList.add('typing-cursor');
+
+  let i = 0;
+
+  function step() {
+    if (i < text.length) {
+      el.textContent += text.charAt(i);
+      i++;
+      setTimeout(step, speed);
+    } else {
+      el.classList.remove('typing-cursor');
+    }
+  }
+
+  setTimeout(step, startDelay);
+}
+
+const aboutDescEl = document.getElementById('about-desc');
+
+if (aboutDescEl) {
+  const aboutDescObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        typeOnce('about-desc', 15, 200);
+        aboutDescObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  aboutDescObserver.observe(aboutDescEl);
+}
