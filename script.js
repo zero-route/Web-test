@@ -169,3 +169,14 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.2 });
 
 revealElements.forEach(el => revealObserver.observe(el));
+
+ fetch('https://api.github.com/users/zero-route')
+  .then(res => res.json())
+  .then(data => {
+    const repoCountEl = document.getElementById('repo-count');
+    if (repoCountEl) repoCountEl.textContent = data.public_repos;
+  })
+  .catch(() => {
+    const repoCountEl = document.getElementById('repo-count');
+    if (repoCountEl) repoCountEl.textContent = '-';
+  });

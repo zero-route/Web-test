@@ -713,6 +713,15 @@ header.fade-out {
   margin-bottom: 50px;
 }
 
+.section-header.reveal {
+  transform: scale(0.6);
+}
+
+.section-header.reveal.in-view {
+  animation: fadeInScale 0.8s ease-out forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
 .section-title {
   font-family: "Audiowide", sans-serif;
   font-size: 28px;
@@ -742,6 +751,26 @@ header.fade-out {
   box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
 }
 
+.about-photo.reveal {
+  transform: scale(0.6);
+}
+
+.about-photo.reveal.in-view {
+  animation: fadeInScale 0.6s ease-out forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+ @keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .about-text {
   text-align: center;
 }
@@ -751,6 +780,26 @@ header.fade-out {
   font-size: 13px;
   color: var(--accent-cyan-light);
   margin-bottom: 6px;
+}
+
+.about-greet.reveal {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+
+.about-greet.reveal.in-view {
+  animation: slideFadeLeftToRight 0.8s ease-out forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+.about-name.reveal {
+  opacity: 0;
+  transform: translateX(60px);
+}
+
+.about-name.reveal.in-view {
+  animation: slideFadeRightToLeft 0.8s ease-out forwards;
+  animation-delay: var(--reveal-delay, 0s);
 }
 
 .about-name {
@@ -779,7 +828,6 @@ header.fade-out {
   flex-wrap: wrap;
 }
 
-/* Stats grid */
 .about-stats {
   display: grid;
   grid-template-columns: 1fr;
