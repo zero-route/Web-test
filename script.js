@@ -114,9 +114,45 @@ document.addEventListener("DOMContentLoaded", () => {
         isStarted = true;
         createTypingEffect("role-typing", rolesList, 300);
         createTypingEffect("skill-typing", skillsList, 600);
+        createTypingEffect("role-typing2", rolesList, 200, false);
       }
     });
 
     observer.observe(mainPage, { attributes: true, attributeFilter: ["class"] });
   }
 });
+function createTypingEffect(elementId, textList, startDelay = 0, withQuotes = true) {
+  const typingElement = document.getElementById(elementId);
+  if (!typingElement) return;
+
+  let textIndex = 0;
+  let charIdx = 0;
+  let isDeleting = false;
+
+  function typeEffect() {
+    const currentText = withQuotes ? `"${textList[textIndex]}"` : textList[textIndex];
+
+    if (isDeleting) {
+      typingElement.textContent = currentText.substring(0, charIdx - 1);
+      charIdx--;
+    } else {
+      typingElement.textContent = currentText.substring(0, charIdx + 1);
+      charIdx++;
+    }
+
+    let speed = isDeleting ? 50 : 90;
+
+    if (!isDeleting && charIdx === currentText.length) {
+      speed = 2000;
+      isDeleting = true;
+    } else if (isDeleting && charIdx === 0) {
+      isDeleting = false;
+      textIndex = (textIndex + 1) % textList.length;
+      speed = 400;
+    }
+
+    setTimeout(typeEffect, speed);
+  }
+
+  setTimeout(typeEffect, startDelay);
+}
