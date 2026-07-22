@@ -217,12 +217,6 @@ header.fade-out {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border-active);
-  box-shadow: 0 0 15px 0 var(--border-active);
-  border-radius: 10px;
-  background-color: rgba(6, 6, 6, 0.79);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   animation: fadeIn 1s ease-out forwards;
 }
 
@@ -447,7 +441,6 @@ header.fade-out {
   animation: blinkSkillCursor 0.8s infinite;
 }
 
-/* Untuk hero text (role-typing2) */
 #role-typing2::after {
   content: '|';
   margin-left: 2px;
@@ -612,10 +605,33 @@ header.fade-out {
   background: var(--gradient-accent);
   color: #fff;
   box-shadow: 0 0 15px rgba(0, 102, 255, 0.4);
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-primary:hover {
   box-shadow: 0 0 25px rgba(0, 102, 255, 0.6);
+  animation: Glow 0.5s ease-in-out forwards;
+}
+
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: rgba(254, 254, 255, 0.4);
+  filter: blur(4px);
+}
+
+.btn-primary:hover::before {
+  animation: Glow 0.5s ease-in-out forwards;
+}
+
+@keyframes Glow {
+  0%   { top: -20px; }
+  100% { top: 100%; }
 }
 
 .btn-outline {
@@ -657,7 +673,6 @@ header.fade-out {
 .main-page.show .hero-socials a:nth-child(4) { animation-delay: 1.8s; }
 .main-page.show .hero-socials a:nth-child(5) { animation-delay: 1.9s; }
 .main-page.show .hero-socials a:nth-child(6) { animation-delay: 2.0s; }
-
 .hero-socials a i {
   font-size: 14px;
   line-height: 1;
