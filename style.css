@@ -55,6 +55,7 @@
   filter: blur(100px);
   opacity: 0.45;
   animation: moveGlowBlue 18s infinite alternate ease-in-out;
+  will-change: transform;
 }
 
 .bg::after {
@@ -69,6 +70,7 @@
   filter: blur(120px);
   opacity: 0.4;
   animation: moveGlowPurple 22s infinite alternate ease-in-out;
+  will-change: transform;
 }
 
 @keyframes moveGlowBlue {
@@ -90,6 +92,13 @@ header {
   justify-content: center;
   align-items: center;
   text-align: center;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+}
+
+header.fade-out {
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
 }
 
 .main-text h1 {
@@ -98,7 +107,7 @@ header {
   font-size: 25px;
 }
 
- @keyframes fadeIn {
+@keyframes fadeIn {
   0% {
     opacity: 0;
     transform: translateY(20px);
@@ -120,22 +129,6 @@ header {
   }
 }
 
-.gradation-text1, .gradation-text2{
-  display: inline-block;
-  opacity: 0;
-  animation-name: slideFadeUp;
-  animation-duration: 0.6s;
-  animation-timing-function: ease-out;
-  animation-fill-mode: forwards;
-}
-
-.gradation-text1 {
-  animation-delay: 1.2s;
-}
-.gradation-text2 {
-  animation-delay: 1.6s;
-}
-
 @keyframes slideFadeDown {
   0% {
     opacity: 0;
@@ -147,6 +140,18 @@ header {
   }
 }
 
+.gradation-text1, .gradation-text2 {
+  display: inline-block;
+  opacity: 0;
+  animation-name: slideFadeUp;
+  animation-duration: 0.6s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+.gradation-text1 { animation-delay: 1.2s; }
+.gradation-text2 { animation-delay: 1.6s; }
+
 .delay1, .delay2, .delay3 {
   display: inline-block;
   opacity: 0;
@@ -156,26 +161,11 @@ header {
   animation-fill-mode: forwards;
 }
 
-.delay1 {
-  animation-delay: 0.2s;
-}
+.delay1 { animation-delay: 0.2s; }
+.delay2 { animation-delay: 0.6s; }
+.delay3 { animation-delay: 1s; }
 
-.delay2 {
-  animation-delay: 0.6s;
-}
-
-.delay3 {
-  animation-delay: 1s;
-}
-
-.main-text h1 .gradation-text1 {
-  background: var(--gradient-text);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px var(--border-active));
-}
-
+.main-text h1 .gradation-text1,
 .main-text h1 .gradation-text2 {
   background: var(--gradient-text);
   -webkit-background-clip: text;
@@ -206,7 +196,7 @@ header {
   box-shadow: 0 0 50px 0 var(--accent-cyan-light);
   background-color: rgba(6, 6, 6, 0.79);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(10px);
   animation: fadeIn 1s ease-out forwards;
   transition: 0.5s;
 }
@@ -232,7 +222,7 @@ header {
   border-radius: 10px;
   background-color: rgba(6, 6, 6, 0.79);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(10px);
   animation: fadeIn 1s ease-out forwards;
 }
 
@@ -282,22 +272,8 @@ header {
 }
 
 @keyframes slideLoading {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(0%);
-  }
-}
-
- header {
-  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-}
-
-header.fade-out {
-  opacity: 0;
-  transform: translateY(-20px);
-  pointer-events: none;
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(0%); }
 }
 
 .main-page {
@@ -319,7 +295,8 @@ header.fade-out {
   opacity: 0;
 }
 
-.main-page.show #navigation { animation: fadeIn 1s forwards
+.main-page.show #navigation {
+  animation: fadeIn 1s forwards;
 }
 
 .nav-container {
@@ -357,7 +334,7 @@ header.fade-out {
 .menu-btn i {
   font-size: 14px;
   color: var(--text-primary);
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease, color 0.3s ease;
 }
 
 .nav-dropdown {
@@ -408,12 +385,6 @@ header.fade-out {
 
 .nav-dropdown ul li a:hover {
   color: var(--accent-cyan-light);
-}
-
-.menu-btn i {
-  font-size: 14px;
-  color: var(--text-primary);
-  transition: transform 0.4s ease, color 0.3s ease;
 }
 
 .menu-btn:has(+ .nav-dropdown.active) i,
@@ -499,10 +470,6 @@ header.fade-out {
 }
 
 @keyframes blinkSkillCursor {
-  0%, 100% { 
-    opacity: 1; 
-  }
-  50% { 
-    opacity: 0; 
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
