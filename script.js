@@ -120,21 +120,3 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(mainPage, { attributes: true, attributeFilter: ["class"] });
   }
 });
-
- const menuBtn = document.getElementById('menu-btn');
-const navLinksEl = document.getElementById('nav-links');
-
-if (menuBtn && navLinksEl) {
-  menuBtn.addEventListener('click', () => {
-    menuBtn.classList.toggle('active');
-    navLinksEl.classList.toggle('open');
-  });
-
-  // Auto-close dropdown saat salah satu link diklik (mobile)
-  navLinksEl.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      menuBtn.classList.remove('active');
-      navLinksEl.classList.remove('open');
-    });
-  });
-}
