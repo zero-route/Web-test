@@ -121,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(mainPage, { attributes: true, attributeFilter: ["class"] });
   }
 });
+
 function createTypingEffect(elementId, textList, startDelay = 0, withQuotes = true) {
   const typingElement = document.getElementById(elementId);
   if (!typingElement) return;
