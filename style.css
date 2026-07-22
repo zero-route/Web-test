@@ -174,38 +174,6 @@ header.fade-out {
   filter: drop-shadow(0 0 20px var(--border-active));
 }
 
-.icon-grup {
-  margin: 10px auto;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-}
-
-.icon-grup .icon {
-  width: 35px;
-  height: 35px;
-  padding: 5px;
-  margin: 5px;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--accent-cyan-light);
-  border-radius: 5px;
-  color: var(--accent-cyan-blue);
-  box-shadow: 0 0 50px 0 var(--accent-cyan-light);
-  background-color: rgba(6, 6, 6, 0.79);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  animation: fadeIn 1s ease-out forwards;
-  transition: 0.5s;
-}
-
-.icon-grup .icon:hover {
-  scale: 1.1;
-  border-color: var(--text-primary);
-}
-
 #text-content {
   width: auto;
   min-width: 140px;
