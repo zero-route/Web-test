@@ -93,42 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isStarted = false;
 
-  function createTypingEffect(elementId, textList, startDelay = 0) {
-    const typingElement = document.getElementById(elementId);
-    if (!typingElement) return;
-
-    let textIndex = 0;
-    let charIdx = 0;
-    let isDeleting = false;
-
-    function typeEffect() {
-      const currentText = `"${textList[textIndex]}"`;
-
-      if (isDeleting) {
-        typingElement.textContent = currentText.substring(0, charIdx - 1);
-        charIdx--;
-      } else {
-        typingElement.textContent = currentText.substring(0, charIdx + 1);
-        charIdx++;
-      }
-
-      let speed = isDeleting ? 50 : 90;
-
-      if (!isDeleting && charIdx === currentText.length) {
-        speed = 2000;
-        isDeleting = true;
-      } else if (isDeleting && charIdx === 0) {
-        isDeleting = false;
-        textIndex = (textIndex + 1) % textList.length;
-        speed = 400;
-      }
-
-      setTimeout(typeEffect, speed);
-    }
-
-    setTimeout(typeEffect, startDelay);
-  }
-
   if (mainPage) {
     const observer = new MutationObserver(() => {
       if (mainPage.classList.contains("show") && !isStarted) {
@@ -284,7 +248,7 @@ function replayPanelReveal(panel) {
   const items = panel.querySelectorAll('.panel-reveal');
   items.forEach(item => {
     item.classList.remove('in-view');
-    void item.offsetWidth; // force reflow supaya animasi bisa replay
+    void item.offsetWidth;
     item.classList.add('in-view');
   });
 }
