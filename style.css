@@ -1519,18 +1519,6 @@ header.fade-out {
 .contact-detail:nth-of-type(3) { animation-delay: 0.3s; }
 .contact-detail:nth-of-type(4) { animation-delay: 0.45s; }
 
-.contact-detail-icon {
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  font-size: 18px;
-  color: var(--accent-cyan-light);
-  background-color: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-
 .contact-icon-box {
   width: 40px;
   height: 40px;
