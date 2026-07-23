@@ -250,3 +250,56 @@ function updateTimelineFill() {
 window.addEventListener('scroll', updateTimelineFill);
 window.addEventListener('resize', updateTimelineFill);
 updateTimelineFill();
+
+// Extend general reveal observer to include reveal-fade
+document.querySelectorAll('.reveal-fade').forEach(el => revealObserver.observe(el));
+
+// Tab switching logic
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabIndicator = document.getElementById('tab-indicator');
+const tabPanels = document.querySelectorAll('.tab-panel');
+
+function replayPanelReveal(panel) {
+  const items = panel.querySelectorAll('.panel-reveal');
+  items.forEach(item => {
+    item.classList.remove('in-view');
+    void item.offsetWidth; // force reflow supaya animasi bisa replay
+    item.classList.add('in-view');
+  });
+}
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const targetTab = btn.getAttribute('data-tab');
+    const index = parseInt(btn.getAttribute('data-index'));
+
+    tabBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    tabIndicator.style.transform = `translateX(${index * 100}%)`;
+
+    tabPanels.forEach(panel => {
+      panel.classList.remove('active');
+      if (panel.id === `panel-${targetTab}`) {
+        panel.classList.add('active');
+        replayPanelReveal(panel);
+      }
+    });
+  });
+});
+
+// Trigger animasi panel pertama (Project) saat section pertama kali terlihat
+const expertiseSection = document.getElementById('expertise');
+if (expertiseSection) {
+  const expertiseObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const firstPanel = document.getElementById('panel-project');
+        replayPanelReveal(firstPanel);
+        expertiseObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  expertiseObserver.observe(expertiseSection);
+}

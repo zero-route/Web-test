@@ -1145,3 +1145,282 @@ header.fade-out {
     left: -47px;
   }
 }
+
+ #expertise {
+  padding: 80px 20px;
+}
+
+.expertise-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.expertise-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-title-gradient {
+  font-family: "Audiowide", sans-serif;
+  font-size: 28px;
+  margin-bottom: 12px;
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.expertise-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+@keyframes fadeInOnly {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.reveal-fade {
+  opacity: 0;
+}
+
+.reveal-fade.in-view {
+  animation: fadeInOnly 0.8s ease-out forwards;
+}
+
+/* ===== TAB MENU ===== */
+.tab-menu-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+.tab-menu {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 420px;
+  background-color: rgba(10, 14, 39, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 10px;
+  padding: 4px;
+  backdrop-filter: blur(10px);
+}
+
+.tab-indicator {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(33.333% - 4px);
+  height: calc(100% - 8px);
+  background: var(--gradient-accent);
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 102, 255, 0.4);
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: 1;
+}
+
+.tab-btn {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.tab-btn.active {
+  color: #fff;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+.panel-reveal {
+  opacity: 0;
+}
+
+.panel-reveal.in-view {
+  animation-fill-mode: forwards;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.project-card {
+  background-color: rgba(10, 14, 39, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 10px;
+  padding: 14px;
+  transform: translateY(30px);
+}
+
+.project-card.in-view {
+  animation-name: slideFadeUp;
+  animation-duration: 0.7s;
+  animation-timing-function: ease-out;
+  animation-delay: calc(var(--index) * 0.15s);
+}
+
+.project-card img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.project-name {
+  font-family: "Audiowide", sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.project-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.tool-card {
+  background-color: rgba(10, 14, 39, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.tool-left {
+  transform: translateX(-60px);
+}
+
+.tool-right {
+  transform: translateX(60px);
+}
+
+.tool-left.in-view {
+  animation-name: slideFadeLeftToRight;
+  animation-duration: 0.7s;
+  animation-timing-function: ease-out;
+  animation-delay: calc(var(--index) * 0.1s);
+}
+
+.tool-right.in-view {
+  animation-name: slideFadeRightToLeft;
+  animation-duration: 0.7s;
+  animation-timing-function: ease-out;
+  animation-delay: calc(var(--index) * 0.1s);
+}
+
+.tool-number {
+  font-family: "Audiowide", sans-serif;
+  font-size: 22px;
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.tool-name {
+  font-family: "Audiowide", sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.tool-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@media (min-width: 700px) {
+  .project-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .tools-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.skills-group {
+  margin-bottom: 36px;
+}
+
+.skills-group-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--accent-cyan-light);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.skill-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 8px;
+  background-color: rgba(10, 14, 39, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 10px;
+  transform: translateY(30px);
+  transition: 0.3s ease;
+}
+
+.skill-item:hover {
+  border-color: var(--accent-cyan-light);
+  transform: translateY(-4px);
+  scale: 1.1
+}
+
+.skill-item.in-view {
+  animation-name: slideFadeUp;
+  animation-duration: 0.6s;
+  animation-timing-function: ease-out;
+  animation-delay: calc(var(--index) * 0.06s);
+}
+
+.skill-item i {
+  font-size: 28px;
+}
+
+.skill-item span {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+@media (min-width: 700px) {
+  .skills-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
