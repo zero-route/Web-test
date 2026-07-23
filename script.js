@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+  window.scrollTo(0, 0);
+  document.body.classList.add('loading');
   const typingTextElement = document.getElementById('typing-text');
   const iconHTML = '<i class="devicon-ionic-original"></i>';
   const textToType = " Zero Route"; 
@@ -30,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         header.style.display = "none";
         mainPage.classList.add("show");
+        document.body.classList.remove('loading');
       }, 800);
     });
   }
@@ -288,7 +291,6 @@ tabBtns.forEach(btn => {
   });
 });
 
-// Trigger animasi panel pertama (Project) saat section pertama kali terlihat
 const expertiseSection = document.getElementById('expertise');
 if (expertiseSection) {
   const expertiseObserver = new IntersectionObserver((entries) => {
