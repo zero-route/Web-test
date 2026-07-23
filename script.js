@@ -323,3 +323,34 @@ if (expertiseSection) {
 
   expertiseObserver.observe(expertiseSection);
 }
+
+ // Observer khusus untuk elemen contact (individual, bukan pakai class .reveal generik)
+const contactRevealEls = document.querySelectorAll(
+  '.contact-info-title, .contact-info-desc, .contact-detail, .contact-socials a, .available-box, .footer-socials a'
+);
+
+const contactObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+      contactObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+
+contactRevealEls.forEach(el => contactObserver.observe(el));
+
+// Grup 2 (form) pakai reveal-right, sudah otomatis ke-handle lewat class .reveal-fade/.reveal existing kalau ditambahkan observenya
+document.querySelectorAll('.contact-form-wrapper.reveal-right').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateX(60px)';
+  const formObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.animation = 'slideFadeRightToLeft 0.8s ease-out forwards';
+        formObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  formObs.observe(el);
+});
