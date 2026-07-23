@@ -219,3 +219,34 @@ if (aboutDescEl) {
 
   aboutDescObserver.observe(aboutDescEl);
 }
+
+ // Timeline zigzag reveal (reuse existing keyframes)
+const timelineItems = document.querySelectorAll('.timeline-item');
+
+const timelineObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+      timelineObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+
+timelineItems.forEach(el => timelineObserver.observe(el));
+const timelineEl = document.querySelector('.timeline');
+const timelineFillEl = document.getElementById('timeline-fill');
+
+function updateTimelineFill() {
+  if (!timelineEl || !timelineFillEl) return;
+  const rect = timelineEl.getBoundingClientRect();
+  const windowHeight = window.innerHeight;
+
+  let progress = (windowHeight - rect.top) / (windowHeight + rect.height);
+  progress = Math.max(0, Math.min(1, progress));
+
+  timelineFillEl.style.height = (progress * 100) + '%';
+}
+
+window.addEventListener('scroll', updateTimelineFill);
+window.addEventListener('resize', updateTimelineFill);
+updateTimelineFill();
