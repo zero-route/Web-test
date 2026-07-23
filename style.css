@@ -32,6 +32,11 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+ html,
+body{
+    overflow-x:hidden;
+} 
+
 .bg {
   position: fixed;
   top: 0;
