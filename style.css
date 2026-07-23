@@ -1762,16 +1762,6 @@ header.fade-out {
 }
 
 /* ===== MUSIC BUTTON & PLAYER ===== */
-.badge-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.badge-row .badge-available {
-  margin-bottom: 0;
-}
 
 .music-toggle-btn {
   width: 34px;
