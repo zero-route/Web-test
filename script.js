@@ -1,3 +1,21 @@
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const targetId = this.getAttribute('href');
+    const targetEl = document.querySelector(targetId);
+    if (!targetEl) return;
+
+    e.preventDefault();
+
+    const navHeight = document.querySelector('.top-nav')?.offsetHeight || 0;
+    const targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+
+    window.scrollTo({
+      top: targetPosition,
+      behavior: 'smooth'
+    });
+  });
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   window.scrollTo(0, 0);
   document.body.classList.add('loading');
