@@ -564,10 +564,18 @@ function stopProgressTracking() {
 }
 
 npProgressBar?.addEventListener('input', () => {
+  stopProgressTracking(); // stop update otomatis selama drag
+});
+
+npProgressBar?.addEventListener('change', () => {
   if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
   const duration = ytPlayer.getDuration();
   const seekTo = (npProgressBar.value / 100) * duration;
   ytPlayer.seekTo(seekTo, true);
+
+  if (isPlaying) {
+    ytPlayer.playVideo();
+  }
 });
 
 npVolumeBar?.addEventListener('input', () => {
