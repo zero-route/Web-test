@@ -337,6 +337,8 @@ let currentQueue = [];
 let currentIndex = -1;
 let progressInterval = null;
 
+const vinylLabel = document.getElementById('vinyl-label');
+ 
 const viewSearch = document.getElementById('view-search');
 const viewNowPlaying = document.getElementById('view-nowplaying');
 const npBackBtn = document.getElementById('np-back-btn');
@@ -430,6 +432,13 @@ function playTrackAt(index) {
   npChannel.textContent = item.snippet.channelTitle;
   npFullTitle.textContent = item.snippet.title;
   npFullChannel.textContent = item.snippet.channelTitle;
+  
+  const thumbUrl = item.snippet.thumbnails.medium?.url
+  || item.snippet.thumbnails.high?.url
+  || item.snippet.thumbnails.default.url;
+
+vinylLabel.src = thumbUrl;
+vinylLabel.classList.add('loaded');
 
   if (!isPlayerReady) {
     pendingVideoId = videoId;
