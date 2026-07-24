@@ -337,18 +337,6 @@ let currentQueue = [];
 let currentIndex = -1;
 let progressInterval = null;
 
- const miniPlayer = document.getElementById('mini-player');
-const miniThumbWrap = document.getElementById('mini-thumb-wrap');
-const miniThumb = document.getElementById('mini-thumb');
-const miniTitle = document.getElementById('mini-title');
-const miniChannel = document.getElementById('mini-channel');
-const miniPlayPause = document.getElementById('mini-playpause');
-const miniPrev = document.getElementById('mini-prev');
-const miniNext = document.getElementById('mini-next');
-const miniProgressFill = document.getElementById('mini-progress-fill');
-
-const vinylLabel = document.getElementById('vinyl-label');
- 
 const viewSearch = document.getElementById('view-search');
 const viewNowPlaying = document.getElementById('view-nowplaying');
 const npBackBtn = document.getElementById('np-back-btn');
@@ -431,24 +419,6 @@ musicSearchInput?.addEventListener('keydown', (e) => {
   }
 });
 
- function updateMediaSession(item) {
-  if (!('mediaSession' in navigator)) return;
-
-  navigator.mediaSession.metadata = new MediaMetadata({
-    title: item.snippet.title,
-    artist: item.snippet.channelTitle,
-    artwork: [
-      { src: item.snippet.thumbnails.default.url, sizes: '120x90', type: 'image/jpeg' },
-      { src: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default.url, sizes: '320x180', type: 'image/jpeg' }
-    ]
-  });
-
-  navigator.mediaSession.setActionHandler('play', () => ytPlayer.playVideo());
-  navigator.mediaSession.setActionHandler('pause', () => ytPlayer.pauseVideo());
-  navigator.mediaSession.setActionHandler('nexttrack', playNext);
-  navigator.mediaSession.setActionHandler('previoustrack', playPrev);
-}
-
 function playTrackAt(index) {
   if (index < 0 || index >= currentQueue.length) return;
   currentIndex = index;
@@ -460,21 +430,6 @@ function playTrackAt(index) {
   npChannel.textContent = item.snippet.channelTitle;
   npFullTitle.textContent = item.snippet.title;
   npFullChannel.textContent = item.snippet.channelTitle;
-  
-  const thumbUrl = item.snippet.thumbnails.medium?.url
-  || item.snippet.thumbnails.high?.url
-  || item.snippet.thumbnails.default.url;
-
-vinylLabel.src = thumbUrl;
-vinylLabel.classList.add('loaded');
-
-  updateMediaSession(item);
-  
-miniThumb.src = thumbUrl;
-miniTitle.textContent = item.snippet.title;
-miniChannel.textContent = item.snippet.channelTitle;
-miniPlayer.classList.add('show');
-
 
   if (!isPlayerReady) {
     pendingVideoId = videoId;
@@ -508,30 +463,20 @@ window.onYouTubeIframeAPIReady = function () {
           pendingVideoId = null;
         }
       },
-onStateChange: (event) => {
-  const state = event.data;
+      onStateChange: (event) => {
+        isPlaying = event.data === YT.PlayerState.PLAYING;
+        updatePlayPauseIcon();
 
-  isPlaying = state === YT.PlayerState.PLAYING;
-  updatePlayPauseIcon();
+        if (event.data === YT.PlayerState.PLAYING) {
+          startProgressTracking();
+        } else {
+          stopProgressTracking();
+        }
 
-  if (state === YT.PlayerState.BUFFERING) {
-    npPlayPause.classList.add('is-loading');
-    npFullPlayPause.classList.add('is-loading');
-  } else {
-    npPlayPause.classList.remove('is-loading');
-    npFullPlayPause.classList.remove('is-loading');
-  }
-
-  if (state === YT.PlayerState.PLAYING) {
-    startProgressTracking();
-  } else {
-    stopProgressTracking();
-  }
-
-  if (state === YT.PlayerState.ENDED) {
-    playNext();
-  }
-}
+        if (event.data === YT.PlayerState.ENDED) {
+          playNext();
+        }
+      }
     }
   });
 };
@@ -540,9 +485,7 @@ function updatePlayPauseIcon() {
   const icon = isPlaying ? 'fa-pause' : 'fa-play';
   npPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
   npFullPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
-  miniPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
   vinylDisc.classList.toggle('spinning', isPlaying);
-  miniThumbWrap.classList.toggle('spinning', isPlaying);
 }
 
 function togglePlayPause() {
@@ -572,23 +515,6 @@ function playPrev() {
 npNextBtn?.addEventListener('click', playNext);
 npPrevBtn?.addEventListener('click', playPrev);
 
- miniPlayPause?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  togglePlayPause();
-});
-miniNext?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  playNext();
-});
-miniPrev?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  playPrev();
-});
-miniPlayer?.addEventListener('click', () => {
-  musicOverlay.classList.add('open');
-  if (currentIndex >= 0) switchView('nowplaying');
-});
-
 function formatTime(seconds) {
   if (!seconds || isNaN(seconds)) return '0:00';
   const m = Math.floor(seconds / 60);
@@ -607,13 +533,6 @@ function startProgressTracking() {
       npProgressBar.value = (current / duration) * 100;
       npCurrentTime.textContent = formatTime(current);
       npDuration.textContent = formatTime(duration);
-      
-      if (duration > 0) {
-      npProgressBar.value = (current / duration) * 100;
-      npCurrentTime.textContent = formatTime(current);
-      npDuration.textContent = formatTime(duration);
-      miniProgressFill.style.width = ((current / duration) * 100) + '%';
-    }
     }
   }, 500);
 }
@@ -626,18 +545,10 @@ function stopProgressTracking() {
 }
 
 npProgressBar?.addEventListener('input', () => {
-  stopProgressTracking();
-});
-
-npProgressBar?.addEventListener('change', () => {
   if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
   const duration = ytPlayer.getDuration();
   const seekTo = (npProgressBar.value / 100) * duration;
   ytPlayer.seekTo(seekTo, true);
-
-  if (isPlaying) {
-    ytPlayer.playVideo();
-  }
 });
 
 npVolumeBar?.addEventListener('input', () => {
