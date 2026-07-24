@@ -421,6 +421,24 @@ musicSearchInput?.addEventListener('keydown', (e) => {
   }
 });
 
+ function updateMediaSession(item) {
+  if (!('mediaSession' in navigator)) return;
+
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: item.snippet.title,
+    artist: item.snippet.channelTitle,
+    artwork: [
+      { src: item.snippet.thumbnails.default.url, sizes: '120x90', type: 'image/jpeg' },
+      { src: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default.url, sizes: '320x180', type: 'image/jpeg' }
+    ]
+  });
+
+  navigator.mediaSession.setActionHandler('play', () => ytPlayer.playVideo());
+  navigator.mediaSession.setActionHandler('pause', () => ytPlayer.pauseVideo());
+  navigator.mediaSession.setActionHandler('nexttrack', playNext);
+  navigator.mediaSession.setActionHandler('previoustrack', playPrev);
+}
+
 function playTrackAt(index) {
   if (index < 0 || index >= currentQueue.length) return;
   currentIndex = index;
@@ -440,6 +458,8 @@ function playTrackAt(index) {
 vinylLabel.src = thumbUrl;
 vinylLabel.classList.add('loaded');
 
+  updateMediaSession(item);
+  
   if (!isPlayerReady) {
     pendingVideoId = videoId;
     return;
@@ -564,7 +584,7 @@ function stopProgressTracking() {
 }
 
 npProgressBar?.addEventListener('input', () => {
-  stopProgressTracking(); // stop update otomatis selama drag
+  stopProgressTracking();
 });
 
 npProgressBar?.addEventListener('change', () => {
