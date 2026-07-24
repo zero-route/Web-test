@@ -329,19 +329,12 @@ const npTitle = document.getElementById('np-title');
 const npChannel = document.getElementById('np-channel');
 const npPlayPause = document.getElementById('np-playpause');
 
-let ytPlayer = null;
-let isPlayerReady = false;
-let isPlaying = false;
-let pendingVideoId = null;
-let currentQueue = [];
-let currentIndex = -1;
-let progressInterval = null;
-
 const viewSearch = document.getElementById('view-search');
 const viewNowPlaying = document.getElementById('view-nowplaying');
 const npBackBtn = document.getElementById('np-back-btn');
 const musicCloseBtn2 = document.getElementById('music-close-btn-2');
 const vinylDisc = document.getElementById('vinyl-disc');
+const vinylLabel = document.getElementById('vinyl-label');
 const npFullTitle = document.getElementById('np-full-title');
 const npFullChannel = document.getElementById('np-full-channel');
 const npProgressBar = document.getElementById('np-progress-bar');
@@ -351,6 +344,25 @@ const npFullPlayPause = document.getElementById('np-full-playpause');
 const npPrevBtn = document.getElementById('np-prev-btn');
 const npNextBtn = document.getElementById('np-next-btn');
 const npVolumeBar = document.getElementById('np-volume-bar');
+
+const miniPlayer = document.getElementById('mini-player');
+const miniThumbWrap = document.getElementById('mini-thumb-wrap');
+const miniThumb = document.getElementById('mini-thumb');
+const miniTitle = document.getElementById('mini-title');
+const miniChannel = document.getElementById('mini-channel');
+const miniPlayPause = document.getElementById('mini-playpause');
+const miniPrev = document.getElementById('mini-prev');
+const miniNext = document.getElementById('mini-next');
+const miniProgressFill = document.getElementById('mini-progress-fill');
+
+let ytPlayer = null;
+let isPlayerReady = false;
+let isPlaying = false;
+let pendingVideoId = null;
+let currentQueue = [];
+let currentIndex = -1;
+let progressInterval = null;
+let hasPlayedOnce = false;
 
 musicToggleBtn?.addEventListener('click', () => {
   musicOverlay.classList.add('open');
@@ -362,6 +374,12 @@ musicToggleBtn?.addEventListener('click', () => {
 
 musicOverlay?.addEventListener('click', (e) => {
   if (e.target === musicOverlay) musicOverlay.classList.remove('open');
+});
+
+miniPlayer?.addEventListener('click', (e) => {
+  if (e.target.closest('.mini-controls')) return;
+  musicOverlay.classList.add('open');
+  if (currentIndex >= 0) switchView('nowplaying');
 });
 
 function switchView(viewName) {
@@ -399,7 +417,7 @@ async function searchMusic(query) {
           <span>${item.snippet.channelTitle}</span>
         </div>
       `;
-      el.addEventListener('click', () => playTrackAt(index));
+      el.addEventListener('click', () => playTrackAt(index, el));
       musicResults.appendChild(el);
     });
   } catch (err) {
@@ -419,26 +437,51 @@ musicSearchInput?.addEventListener('keydown', (e) => {
   }
 });
 
-function playTrackAt(index) {
+function setLoadingState(el, loading) {
+  if (!el) return;
+  el.classList.toggle('is-loading', loading);
+}
+
+function playTrackAt(index, clickedEl = null) {
   if (index < 0 || index >= currentQueue.length) return;
   currentIndex = index;
   const item = currentQueue[index];
   const videoId = item.id.videoId;
+  const thumbUrl = item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default.url;
 
-  npThumb.src = item.snippet.thumbnails.default.url;
+  // Loading indicator di hasil pencarian yang diklik
+  if (clickedEl) setLoadingState(clickedEl, true);
+
+  npThumb.src = thumbUrl;
   npTitle.textContent = item.snippet.title;
   npChannel.textContent = item.snippet.channelTitle;
   npFullTitle.textContent = item.snippet.title;
   npFullChannel.textContent = item.snippet.channelTitle;
 
+  vinylLabel.src = thumbUrl;
+  vinylLabel.classList.remove('loaded');
+  vinylLabel.onload = () => vinylLabel.classList.add('loaded');
+
+  miniThumb.src = thumbUrl;
+  miniTitle.textContent = item.snippet.title;
+  miniChannel.textContent = item.snippet.channelTitle;
+
   if (!isPlayerReady) {
     pendingVideoId = videoId;
     return;
   }
+
+  vinylDisc.classList.add('is-loading');
   ytPlayer.loadVideoById(videoId);
   isPlaying = true;
+  hasPlayedOnce = true;
   switchView('nowplaying');
   updatePlayPauseIcon();
+  showMiniPlayer();
+}
+
+function showMiniPlayer() {
+  miniPlayer?.classList.add('show');
 }
 
 function loadYouTubeAPI() {
@@ -455,15 +498,28 @@ window.onYouTubeIframeAPIReady = function () {
     events: {
       onReady: () => {
         isPlayerReady = true;
-        ytPlayer.setVolume(80);
+        ytPlayer.setVolume(npVolumeBar ? npVolumeBar.value : 80);
         if (pendingVideoId) {
+          vinylDisc.classList.add('is-loading');
           ytPlayer.loadVideoById(pendingVideoId);
           isPlaying = true;
+          hasPlayedOnce = true;
           updatePlayPauseIcon();
+          showMiniPlayer();
           pendingVideoId = null;
         }
       },
       onStateChange: (event) => {
+        // Buffering (loading) state
+        if (event.data === YT.PlayerState.BUFFERING) {
+          vinylDisc.classList.add('is-loading');
+        } else {
+          vinylDisc.classList.remove('is-loading');
+          document.querySelectorAll('.music-result-item.is-loading').forEach(el => {
+            el.classList.remove('is-loading');
+          });
+        }
+
         isPlaying = event.data === YT.PlayerState.PLAYING;
         updatePlayPauseIcon();
 
@@ -485,7 +541,9 @@ function updatePlayPauseIcon() {
   const icon = isPlaying ? 'fa-pause' : 'fa-play';
   npPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
   npFullPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
+  if (miniPlayPause) miniPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
   vinylDisc.classList.toggle('spinning', isPlaying);
+  miniThumbWrap?.classList.toggle('spinning', isPlaying);
 }
 
 function togglePlayPause() {
@@ -499,6 +557,7 @@ function togglePlayPause() {
 
 npPlayPause?.addEventListener('click', togglePlayPause);
 npFullPlayPause?.addEventListener('click', togglePlayPause);
+miniPlayPause?.addEventListener('click', togglePlayPause);
 
 function playNext() {
   if (currentQueue.length === 0) return;
@@ -514,6 +573,8 @@ function playPrev() {
 
 npNextBtn?.addEventListener('click', playNext);
 npPrevBtn?.addEventListener('click', playPrev);
+miniNext?.addEventListener('click', playNext);
+miniPrev?.addEventListener('click', playPrev);
 
 function formatTime(seconds) {
   if (!seconds || isNaN(seconds)) return '0:00';
@@ -530,9 +591,11 @@ function startProgressTracking() {
     const duration = ytPlayer.getDuration();
 
     if (duration > 0) {
-      npProgressBar.value = (current / duration) * 100;
+      const pct = (current / duration) * 100;
+      npProgressBar.value = pct;
       npCurrentTime.textContent = formatTime(current);
       npDuration.textContent = formatTime(duration);
+      if (miniProgressFill) miniProgressFill.style.width = pct + '%';
     }
   }, 500);
 }
