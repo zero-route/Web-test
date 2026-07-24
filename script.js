@@ -337,6 +337,16 @@ let currentQueue = [];
 let currentIndex = -1;
 let progressInterval = null;
 
+ const miniPlayer = document.getElementById('mini-player');
+const miniThumbWrap = document.getElementById('mini-thumb-wrap');
+const miniThumb = document.getElementById('mini-thumb');
+const miniTitle = document.getElementById('mini-title');
+const miniChannel = document.getElementById('mini-channel');
+const miniPlayPause = document.getElementById('mini-playpause');
+const miniPrev = document.getElementById('mini-prev');
+const miniNext = document.getElementById('mini-next');
+const miniProgressFill = document.getElementById('mini-progress-fill');
+
 const vinylLabel = document.getElementById('vinyl-label');
  
 const viewSearch = document.getElementById('view-search');
@@ -460,6 +470,11 @@ vinylLabel.classList.add('loaded');
 
   updateMediaSession(item);
   
+miniThumb.src = thumbUrl;
+miniTitle.textContent = item.snippet.title;
+miniChannel.textContent = item.snippet.channelTitle;
+miniPlayer.classList.add('show');
+
   if (!isPlayerReady) {
     pendingVideoId = videoId;
     return;
@@ -524,7 +539,9 @@ function updatePlayPauseIcon() {
   const icon = isPlaying ? 'fa-pause' : 'fa-play';
   npPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
   npFullPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
+  miniPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
   vinylDisc.classList.toggle('spinning', isPlaying);
+  miniThumbWrap.classList.toggle('spinning', isPlaying);
 }
 
 function togglePlayPause() {
@@ -554,6 +571,23 @@ function playPrev() {
 npNextBtn?.addEventListener('click', playNext);
 npPrevBtn?.addEventListener('click', playPrev);
 
+ miniPlayPause?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  togglePlayPause();
+});
+miniNext?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  playNext();
+});
+miniPrev?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  playPrev();
+});
+miniPlayer?.addEventListener('click', () => {
+  musicOverlay.classList.add('open');
+  if (currentIndex >= 0) switchView('nowplaying');
+});
+
 function formatTime(seconds) {
   if (!seconds || isNaN(seconds)) return '0:00';
   const m = Math.floor(seconds / 60);
@@ -572,6 +606,13 @@ function startProgressTracking() {
       npProgressBar.value = (current / duration) * 100;
       npCurrentTime.textContent = formatTime(current);
       npDuration.textContent = formatTime(duration);
+      
+      if (duration > 0) {
+      npProgressBar.value = (current / duration) * 100;
+      npCurrentTime.textContent = formatTime(current);
+      npDuration.textContent = formatTime(duration);
+      miniProgressFill.style.width = ((current / duration) * 100) + '%';
+    }
     }
   }, 500);
 }
@@ -604,3 +645,4 @@ npVolumeBar?.addEventListener('input', () => {
 });
 
 loadYouTubeAPI();
+
