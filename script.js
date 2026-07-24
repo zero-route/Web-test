@@ -304,7 +304,6 @@ const contactObserver = new IntersectionObserver((entries) => {
 
 contactRevealEls.forEach(el => contactObserver.observe(el));
 
-// Grup 2 (form) pakai reveal-right, sudah otomatis ke-handle lewat class .reveal-fade/.reveal existing kalau ditambahkan observenya
 document.querySelectorAll('.contact-form-wrapper.reveal-right').forEach(el => {
   el.style.opacity = '0';
   el.style.transform = 'translateX(60px)';
@@ -319,35 +318,54 @@ document.querySelectorAll('.contact-form-wrapper.reveal-right').forEach(el => {
   formObs.observe(el);
 });
 
-// ===== MUSIC PLAYER (YouTube via Worker) =====
-const WORKER_ENDPOINT = "https://yt-music-portofolio.iostream911.workers.dev/";
-
-const musicToggleBtn = document.getElementById('music-toggle-btn');
-const musicOverlay = document.getElementById('music-overlay');
-const musicCloseBtn = document.getElementById('music-close-btn');
-const musicSearchInput = document.getElementById('music-search-input');
-const musicSearchBtn = document.getElementById('music-search-btn');
-const musicResults = document.getElementById('music-results');
-const npThumb = document.getElementById('np-thumb');
-const npTitle = document.getElementById('np-title');
-const npChannel = document.getElementById('np-channel');
-const npPlayPause = document.getElementById('np-playpause');
-
 let ytPlayer = null;
 let isPlayerReady = false;
 let isPlaying = false;
+let pendingVideoId = null;
+let currentQueue = [];
+let currentIndex = -1;
+let progressInterval = null;
+
+const viewSearch = document.getElementById('view-search');
+const viewNowPlaying = document.getElementById('view-nowplaying');
+const npBackBtn = document.getElementById('np-back-btn');
+const musicCloseBtn2 = document.getElementById('music-close-btn-2');
+const vinylDisc = document.getElementById('vinyl-disc');
+const npFullTitle = document.getElementById('np-full-title');
+const npFullChannel = document.getElementById('np-full-channel');
+const npProgressBar = document.getElementById('np-progress-bar');
+const npCurrentTime = document.getElementById('np-current-time');
+const npDuration = document.getElementById('np-duration');
+const npFullPlayPause = document.getElementById('np-full-playpause');
+const npPrevBtn = document.getElementById('np-prev-btn');
+const npNextBtn = document.getElementById('np-next-btn');
+const npVolumeBar = document.getElementById('np-volume-bar');
 
 musicToggleBtn?.addEventListener('click', () => {
   musicOverlay.classList.add('open');
 });
 
-musicCloseBtn?.addEventListener('click', () => {
-  musicOverlay.classList.remove('open');
+[musicCloseBtn, musicCloseBtn2].forEach(btn => {
+  btn?.addEventListener('click', () => musicOverlay.classList.remove('open'));
 });
 
 musicOverlay?.addEventListener('click', (e) => {
   if (e.target === musicOverlay) musicOverlay.classList.remove('open');
 });
+
+function switchView(viewName) {
+  viewSearch.classList.toggle('active', viewName === 'search');
+  viewNowPlaying.classList.toggle('active', viewName === 'nowplaying');
+}
+
+npBackBtn?.addEventListener('click', () => switchView('search'));
+musicNowPlayingBar()?.addEventListener?.('click', () => {});
+
+document.getElementById('music-now-playing')?.addEventListener('click', () => {
+  if (currentIndex >= 0) switchView('nowplaying');
+});
+
+function musicNowPlayingBar() { return null; }
 
 async function searchMusic(query) {
   musicResults.innerHTML = '<p class="music-hint">Mencari...</p>';
@@ -360,10 +378,10 @@ async function searchMusic(query) {
       return;
     }
 
+    currentQueue = data.items.filter(item => item.id && item.id.videoId);
     musicResults.innerHTML = '';
-    data.items.forEach(item => {
-      if (!item.id || !item.id.videoId) return;
 
+    currentQueue.forEach((item, index) => {
       const el = document.createElement('div');
       el.className = 'music-result-item';
       el.innerHTML = `
@@ -373,7 +391,7 @@ async function searchMusic(query) {
           <span>${item.snippet.channelTitle}</span>
         </div>
       `;
-      el.addEventListener('click', () => playTrack(item));
+      el.addEventListener('click', () => playTrackAt(index));
       musicResults.appendChild(el);
     });
   } catch (err) {
@@ -393,11 +411,17 @@ musicSearchInput?.addEventListener('keydown', (e) => {
   }
 });
 
-function playTrack(item) {
+function playTrackAt(index) {
+  if (index < 0 || index >= currentQueue.length) return;
+  currentIndex = index;
+  const item = currentQueue[index];
   const videoId = item.id.videoId;
+
   npThumb.src = item.snippet.thumbnails.default.url;
   npTitle.textContent = item.snippet.title;
   npChannel.textContent = item.snippet.channelTitle;
+  npFullTitle.textContent = item.snippet.title;
+  npFullChannel.textContent = item.snippet.channelTitle;
 
   if (!isPlayerReady) {
     pendingVideoId = videoId;
@@ -405,10 +429,9 @@ function playTrack(item) {
   }
   ytPlayer.loadVideoById(videoId);
   isPlaying = true;
+  switchView('nowplaying');
   updatePlayPauseIcon();
 }
-
-let pendingVideoId = null;
 
 function loadYouTubeAPI() {
   const tag = document.createElement('script');
@@ -424,6 +447,7 @@ window.onYouTubeIframeAPIReady = function () {
     events: {
       onReady: () => {
         isPlayerReady = true;
+        ytPlayer.setVolume(80);
         if (pendingVideoId) {
           ytPlayer.loadVideoById(pendingVideoId);
           isPlaying = true;
@@ -434,24 +458,94 @@ window.onYouTubeIframeAPIReady = function () {
       onStateChange: (event) => {
         isPlaying = event.data === YT.PlayerState.PLAYING;
         updatePlayPauseIcon();
+
+        if (event.data === YT.PlayerState.PLAYING) {
+          startProgressTracking();
+        } else {
+          stopProgressTracking();
+        }
+
+        if (event.data === YT.PlayerState.ENDED) {
+          playNext();
+        }
       }
     }
   });
 };
 
 function updatePlayPauseIcon() {
-  npPlayPause.innerHTML = isPlaying
-    ? '<i class="fa-solid fa-pause"></i>'
-    : '<i class="fa-solid fa-play"></i>';
+  const icon = isPlaying ? 'fa-pause' : 'fa-play';
+  npPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
+  npFullPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
+  vinylDisc.classList.toggle('spinning', isPlaying);
 }
 
-npPlayPause?.addEventListener('click', () => {
+function togglePlayPause() {
   if (!ytPlayer) return;
   if (isPlaying) {
     ytPlayer.pauseVideo();
   } else {
     ytPlayer.playVideo();
   }
+}
+
+npPlayPause?.addEventListener('click', togglePlayPause);
+npFullPlayPause?.addEventListener('click', togglePlayPause);
+
+function playNext() {
+  if (currentQueue.length === 0) return;
+  const nextIndex = (currentIndex + 1) % currentQueue.length;
+  playTrackAt(nextIndex);
+}
+
+function playPrev() {
+  if (currentQueue.length === 0) return;
+  const prevIndex = (currentIndex - 1 + currentQueue.length) % currentQueue.length;
+  playTrackAt(prevIndex);
+}
+
+npNextBtn?.addEventListener('click', playNext);
+npPrevBtn?.addEventListener('click', playPrev);
+
+function formatTime(seconds) {
+  if (!seconds || isNaN(seconds)) return '0:00';
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function startProgressTracking() {
+  stopProgressTracking();
+  progressInterval = setInterval(() => {
+    if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+    const current = ytPlayer.getCurrentTime();
+    const duration = ytPlayer.getDuration();
+
+    if (duration > 0) {
+      npProgressBar.value = (current / duration) * 100;
+      npCurrentTime.textContent = formatTime(current);
+      npDuration.textContent = formatTime(duration);
+    }
+  }, 500);
+}
+
+function stopProgressTracking() {
+  if (progressInterval) {
+    clearInterval(progressInterval);
+    progressInterval = null;
+  }
+}
+
+npProgressBar?.addEventListener('input', () => {
+  if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
+  const duration = ytPlayer.getDuration();
+  const seekTo = (npProgressBar.value / 100) * duration;
+  ytPlayer.seekTo(seekTo, true);
+});
+
+npVolumeBar?.addEventListener('input', () => {
+  if (!ytPlayer) return;
+  ytPlayer.setVolume(npVolumeBar.value);
 });
 
 loadYouTubeAPI();
