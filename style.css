@@ -2171,7 +2171,7 @@ header.fade-out {
 }
 
 .vinyl-disc {
-  position: relative; /* pastikan ini ada, kayaknya sudah */
+  position: relative;
 }
 
 .vinyl-label {
@@ -2194,5 +2194,32 @@ header.fade-out {
 }
 
 .vinyl-disc::after {
-  z-index: 2; /* titik tengah tetap di atas gambar */
+  z-index: 2;
+}
+
+.is-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.is-loading i {
+  opacity: 0;
+}
+
+.is-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spinLoader 0.7s linear infinite;
+}
+
+@keyframes spinLoader {
+  to { transform: rotate(360deg); }
 }

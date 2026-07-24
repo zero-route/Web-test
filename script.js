@@ -472,20 +472,30 @@ window.onYouTubeIframeAPIReady = function () {
           pendingVideoId = null;
         }
       },
-      onStateChange: (event) => {
-        isPlaying = event.data === YT.PlayerState.PLAYING;
-        updatePlayPauseIcon();
+onStateChange: (event) => {
+  const state = event.data;
 
-        if (event.data === YT.PlayerState.PLAYING) {
-          startProgressTracking();
-        } else {
-          stopProgressTracking();
-        }
+  isPlaying = state === YT.PlayerState.PLAYING;
+  updatePlayPauseIcon();
 
-        if (event.data === YT.PlayerState.ENDED) {
-          playNext();
-        }
-      }
+  if (state === YT.PlayerState.BUFFERING) {
+    npPlayPause.classList.add('is-loading');
+    npFullPlayPause.classList.add('is-loading');
+  } else {
+    npPlayPause.classList.remove('is-loading');
+    npFullPlayPause.classList.remove('is-loading');
+  }
+
+  if (state === YT.PlayerState.PLAYING) {
+    startProgressTracking();
+  } else {
+    stopProgressTracking();
+  }
+
+  if (state === YT.PlayerState.ENDED) {
+    playNext();
+  }
+}
     }
   });
 };
