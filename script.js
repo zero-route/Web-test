@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add('loading');
   const typingTextElement = document.getElementById('typing-text');
   const iconHTML = '<i class="devicon-ionic-original"></i>';
-  const textToType = " Zero Route"; 
+  const textToType = " Zero Route";
   let charIndex = 0;
   const typingSpeed = 120;
 
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     typingTextElement.innerHTML = iconHTML;
     const textSpan = document.createElement('span');
     typingTextElement.appendChild(textSpan);
-    
+
     const typingInterval = setInterval(() => {
       if (charIndex < textToType.length) {
         textSpan.textContent += textToType.charAt(charIndex);
@@ -55,8 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-
-
   const rolesList = [
     'Network Engineer',
     'Penetration Testing',
@@ -68,26 +66,26 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   const skillsList = [
-    'HTML5', 
-    'CSS3', 
-    'TailwindCSS', 
-    'JavaScript', 
-    'TypeScript', 
-    'React', 
-    'Node.js', 
-    'PHP', 
-    'Laravel', 
-    'Ruby', 
-    'Express.js', 
-    'MongoDB', 
-    'PostgreSQL', 
-    'MySQL', 
-    'GitLab', 
-    'GitHub', 
-    'Python', 
-    'C++', 
-    'C', 
-    'Java', 
+    'HTML5',
+    'CSS3',
+    'TailwindCSS',
+    'JavaScript',
+    'TypeScript',
+    'React',
+    'Node.js',
+    'PHP',
+    'Laravel',
+    'Ruby',
+    'Express.js',
+    'MongoDB',
+    'PostgreSQL',
+    'MySQL',
+    'GitLab',
+    'GitHub',
+    'Python',
+    'C++',
+    'C',
+    'Java',
     'Arduino'
   ];
 
@@ -156,7 +154,7 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 revealElements.forEach(el => revealObserver.observe(el));
 
- fetch('https://api.github.com/users/zero-route')
+fetch('https://api.github.com/users/zero-route')
   .then(res => res.json())
   .then(data => {
     const repoCountEl = document.getElementById('repo-count');
@@ -166,7 +164,7 @@ revealElements.forEach(el => revealObserver.observe(el));
     const repoCountEl = document.getElementById('repo-count');
     if (repoCountEl) repoCountEl.textContent = '-';
   });
-  
+
 function typeOnce(elementId, speed = 15, startDelay = 0) {
   const el = document.getElementById(elementId);
   if (!el) return;
@@ -205,7 +203,7 @@ if (aboutDescEl) {
   aboutDescObserver.observe(aboutDescEl);
 }
 
- // Timeline zigzag reveal (reuse existing keyframes)
+// Timeline zigzag reveal
 const timelineItems = document.querySelectorAll('.timeline-item');
 
 const timelineObserver = new IntersectionObserver((entries) => {
@@ -236,7 +234,6 @@ window.addEventListener('scroll', updateTimelineFill);
 window.addEventListener('resize', updateTimelineFill);
 updateTimelineFill();
 
-// Extend general reveal observer to include reveal-fade
 document.querySelectorAll('.reveal-fade').forEach(el => revealObserver.observe(el));
 
 // Tab switching logic
@@ -288,7 +285,7 @@ if (expertiseSection) {
   expertiseObserver.observe(expertiseSection);
 }
 
- // Observer khusus untuk elemen contact (individual, bukan pakai class .reveal generik)
+// Contact reveal
 const contactRevealEls = document.querySelectorAll(
   '.contact-info-title, .contact-info-desc, .contact-detail, .contact-socials a, .available-box, .footer-socials a'
 );
@@ -317,6 +314,20 @@ document.querySelectorAll('.contact-form-wrapper.reveal-right').forEach(el => {
   }, { threshold: 0.2 });
   formObs.observe(el);
 });
+
+// ===== MUSIC PLAYER (YouTube via Worker) =====
+const WORKER_ENDPOINT = "https://yt-music-portofolio.iostream911.workers.dev/";
+
+const musicToggleBtn = document.getElementById('music-toggle-btn');
+const musicOverlay = document.getElementById('music-overlay');
+const musicCloseBtn = document.getElementById('music-close-btn');
+const musicSearchInput = document.getElementById('music-search-input');
+const musicSearchBtn = document.getElementById('music-search-btn');
+const musicResults = document.getElementById('music-results');
+const npThumb = document.getElementById('np-thumb');
+const npTitle = document.getElementById('np-title');
+const npChannel = document.getElementById('np-channel');
+const npPlayPause = document.getElementById('np-playpause');
 
 let ytPlayer = null;
 let isPlayerReady = false;
@@ -359,13 +370,10 @@ function switchView(viewName) {
 }
 
 npBackBtn?.addEventListener('click', () => switchView('search'));
-musicNowPlayingBar()?.addEventListener?.('click', () => {});
 
 document.getElementById('music-now-playing')?.addEventListener('click', () => {
   if (currentIndex >= 0) switchView('nowplaying');
 });
-
-function musicNowPlayingBar() { return null; }
 
 async function searchMusic(query) {
   musicResults.innerHTML = '<p class="music-hint">Mencari...</p>';
