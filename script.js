@@ -473,7 +473,8 @@ vinylLabel.classList.add('loaded');
 miniThumb.src = thumbUrl;
 miniTitle.textContent = item.snippet.title;
 miniChannel.textContent = item.snippet.channelTitle;
-miniPlayer.classList.add('show');
+miniPlayer.classList.add('show');⇝
+
 
   if (!isPlayerReady) {
     pendingVideoId = videoId;
